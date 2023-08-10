@@ -1,4 +1,3 @@
-const { listenerCount } = require("process");
 const readline = require("readline-sync");
 
 const listaDeTareas = [
@@ -6,83 +5,85 @@ const listaDeTareas = [
   { id: 2, nombre: "tarea2", completado: true },
 ];
 
-const principal = () => {
-  const opciones = [
-    "Crear tarea.",
-    "Eliminar tareas.",
-    "Completar tareas.",
-    "Listar de tareas",
-  ];
-  const index = readline.keyInSelect(opciones, "¿QUE QUIERES HACER?");
-  menu(index.toString());
+const principal = async () => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const opciones = [
+        "Crear tarea.",
+        "Eliminar tareas.",
+        "Completar tareas.",
+        "Listar de tareas",
+      ];
+      const index = readline.keyInSelect(opciones, "¿QUE QUIERES HACER?");
+      const opcion = index.toString();
+      if (opcion) {
+        resolve(opcion);
+      } else {
+        reject("no es una opcion valida");
+      }
+    }, 2000); // Se simula un retardo de 2 segundos
+  });
 };
 
-function menu(elige) {
-  console.log(elige);
-  switch (elige) {
-    case "0":
-      crearTarea();
-      break;
-    case "1":
-      eliminarTarea();
-      break;
-    case "2":
-      cambiarEstadoTarea();
-      break;
-    case "3":
-      mostrarTareas();
-      break;
-    case "4":
-      console.log("Gracias, vuelve pronto!");
-      break;
-    default:
-      console.log(
-        "Opción incorrecta. Por favor, seleccione una opción válida."
-      );
-      principal();
-      break;
-  }
-}
-
-const mostrarTareas = () => {
-  console.log(listaDeTareas);
-  principal();
+const mostrarTareas = async () => {
+  return new Promise((resolve, reject) => {
+    if (listaDeTareas) {
+      resolve(listaDeTareas);
+    } else {
+      reject("No existen tareas a mostrar");
+    }
+  });
 };
 
 //función para crear nueva tarea
-const crearTarea = () => {
-  const nombreTareaCreada = readline.question("¿Que tarea desea crear? ");
-  listaDeTareas.push({
-    id: listaDeTareas.length + 1,
-    nombre: nombreTareaCreada,
-    completado: false,
+const crearTarea = async () => {
+  return new Promise((resolve, reject) => {
+    const nombreTareaCreada = readline.question("¿Que tarea desea crear? ");
+    if (nombreTareaCreada) {
+      resolve(nombreTareaCreada);
+    } else {
+      reject("No se pudo crear la tarea");
+    }
   });
-  principal();
+  //
 };
 
 //Función para eliminar una tarea.
-const eliminarTarea = () => {
-  const index = readline.keyInSelect(
-    JSON.stringify(listaDeTareas),
-    "¿Cuál de estas tareas deseas eliminar?"
-  );
-  listaDeTareas.splice(index, 1);
-  console.log(listaDeTareas);
-  principal();
+const eliminarTarea = async () => {
+  return new Promise((resolve, reject) => {
+    const index = readline.keyInSelect(
+      JSON.stringify(listaDeTareas),
+      "¿Cuál de estas tareas deseas eliminar?"
+    );
+    if (index) {
+      resolve(index);
+    } else {
+      reject("No se pudo eliminar la tarea");
+    }
+  });
 };
 
-const cambiarEstadoTarea = () => {
-  console.log(listaDeTareas);
-  const index = readline.keyInSelect(
-    listaDeTareas,
-    "¿Cuál de estas tareas deseas completar?"
-  );
-  const tareaEncontrada = listaDeTareas.filter(
-    (_, indice) => index === indice
-  )[0];
-  tareaEncontrada.completado = !tareaEncontrada.completado;
-  console.log(listaDeTareas);
-  principal();
+//Funcion para cambiar el estado de la tarea.
+const cambiarEstadoTarea = async () => {
+  return new Promise((resolve, reject) => {
+    console.log(listaDeTareas);
+    const index = readline.keyInSelect(
+      listaDeTareas,
+      "¿Cuál de estas tareas deseas completar?"
+    );
+    if (index) {
+      resolve(index);
+    } else {
+      reject("No se pudo completar la tarea");
+    }
+  });
 };
 
-principal();
+module.exports = {
+  listaDeTareas,
+  principal,
+  mostrarTareas,
+  crearTarea,
+  eliminarTarea,
+  cambiarEstadoTarea,
+};
